@@ -94,6 +94,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   id: {
@@ -120,6 +121,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'validation']);
 
+const formValidation = useFormValidation();
+
 const fileInput = ref(null);
 const fileName = ref('');
 const touched = ref(false);
@@ -129,8 +132,7 @@ const isValid = computed(() => {
   if (!props.required && !props.modelValue) return true;
   if (!props.modelValue) return false;
   
-  const validTypes = ['image/jpeg', 'image/jpg'];
-  return validTypes.includes(props.modelValue.type);
+  return formValidation.validateFile(props.modelValue);
 });
 
 const triggerFileInput = () => {

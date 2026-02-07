@@ -40,7 +40,7 @@
         v-model="formData.firstName"
         placeholder="Ingrese su primer nombre"
         :required="true"
-        :validator="(value) => value && value.trim().length >= 2"
+        :validator="(value) => formValidation.validateRequired(value) && value.trim().length >= 2"
         error-message="El nombre debe tener al menos 2 caracteres"
         @validation="onValidation('firstName', $event)"
       />
@@ -53,7 +53,7 @@
         v-model="formData.secondName"
         placeholder="Ingrese su segundo nombre"
         :required="true"
-        :validator="(value) => value && value.trim().length >= 2"
+        :validator="(value) => formValidation.validateRequired(value) && value.trim().length >= 2"
         error-message="El segundo nombre debe tener al menos 2 caracteres"
         @validation="onValidation('secondName', $event)"
       />
@@ -93,7 +93,7 @@
         type="text"
         placeholder="Ingrese el número de documento"
         :required="true"
-        :validator="validateDocumentNumber"
+        :validator="formValidation.validateDocumentNumber"
         error-message="Debe contener al menos 5 dígitos numéricos"
         @input="filterDocumentNumber"
         @keypress="preventNonNumeric"
@@ -150,7 +150,8 @@ import InputField from '@/components/ui/InputField.vue';
 import SelectField from '@/components/ui/SelectField.vue';
 import DateField from '@/components/ui/DateField.vue';
 import FileField from '@/components/ui/FileField.vue';
-import { fetchCountries } from '@/services/countryService'
+import { fetchCountries } from '@/services/countryService';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   modelValue: {
@@ -160,6 +161,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'isValid']);
+
+
+const formValidation = useFormValidation();
 
 const formData = computed({
   get: () => props.modelValue,
@@ -243,11 +247,6 @@ const preventNonNumeric = (event) => {
   return true;
 };
 
-const validateDocumentNumber = (value) => {
-  const numberRegex = /^\d{5,}$/;
-  return numberRegex.test(value);
-};
-
 const onValidation = (field, isValid) => {
   validations[field] = isValid;
   emit('isValid', isStepValid.value);
@@ -303,7 +302,7 @@ onMounted(async () => {
   const countries = await fetchCountries();
   countryOptions.value = countries.map(c => ({
     value: c.code,
-    label: c.name, // Solo el nombre del país
+    label: c.name, 
   }));
   
   emit('isValid', isStepValid.value);

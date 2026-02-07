@@ -1,3 +1,4 @@
+
 <template>
   <div class="mb-4">
     <label :for="id" class="label-field">
@@ -11,9 +12,7 @@
         @change="handleChange"
         @blur="handleBlur"
         :class="[
-          'input-field',
-          'pr-10',
-          'appearance-none',
+          'input-field appearance-none pr-10',
           touched && !isValid ? 'error' : '',
           touched && isValid ? 'success' : ''
         ]"
@@ -29,14 +28,14 @@
       </select>
       
       <!-- Flecha del select -->
-      <div class="absolute inset-y-0 right-10 flex items-center pointer-events-none">
+      <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </div>
       
       <!-- Icono de validación -->
-      <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+      <div class="absolute inset-y-0 right-8 flex items-center pr-2 pointer-events-none">
         <svg
           v-if="touched && isValid"
           class="w-5 h-5 text-green-500"
@@ -136,3 +135,4 @@ defineExpose({
   },
 });
 </script>
+

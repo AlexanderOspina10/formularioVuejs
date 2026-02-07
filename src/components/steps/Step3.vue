@@ -25,7 +25,7 @@
         v-model="formData.postalCode"
         placeholder="Ej: 110111"
         :required="true"
-        :validator="validatePostalCode"
+        :validator="formValidation.validatePostalCode"
         error-message="Ingrese un código postal válido (mínimo 4 caracteres)"
         @input="filterPostalCode"
         @keypress="preventNonNumeric"
@@ -89,6 +89,7 @@
 <script setup>
 import { ref, reactive, computed, inject, watch, onMounted, nextTick } from 'vue';
 import InputField from '@/components/ui/InputField.vue';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   modelValue: {
@@ -98,6 +99,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'isValid']);
+
+const formValidation = useFormValidation();
 
 const formData = computed({
   get: () => props.modelValue,
@@ -156,11 +159,7 @@ const onValidation = (field, isValid) => {
 };
 
 const validateAddress = (address) => {
-  return address && address.trim().length >= 10;
-};
-
-const validatePostalCode = (code) => {
-  return code && code.trim().length >= 4 && /^\d+$/.test(code);
+  return formValidation.validateRequired(address) && address.trim().length >= 10;
 };
 
 const fullName = computed(() => {
@@ -226,5 +225,6 @@ defineExpose({
   validateStep,
   validateStepWithFeedback,
   isValid: isStepValid,
+  showValidationSummary,
 });
 </script>

@@ -1,3 +1,4 @@
+
 <template>
   <div class="space-y-6">
     <h2 class="text-2xl font-bold text-gray-900 mb-6">Información de Contacto</h2>
@@ -13,7 +14,7 @@
           type="email"
           placeholder="ejemplo@correo.com"
           :required="true"
-          :validator="validateEmail"
+          :validator="formValidation.validateEmail"
           error-message="Ingrese un correo electrónico válido"
           @validation="onValidation('email', $event)"
         />
@@ -144,7 +145,7 @@
         type="text"
         placeholder="Ej: 3001234567"
         :required="true"
-        :validator="validatePhone"
+        :validator="formValidation.validatePhone"
         error-message="Ingrese un número de teléfono válido (mínimo 7 dígitos)"
         @input="filterPhoneNumber($event, 'phone')"
         @keypress="preventNonNumeric"
@@ -160,7 +161,7 @@
         type="text"
         placeholder="Ej: 3201234567"
         :required="true"
-        :validator="validatePhone"
+        :validator="formValidation.validatePhone"
         error-message="Ingrese un número de celular válido (mínimo 7 dígitos)"
         @input="filterPhoneNumber($event, 'mobile')"
         @keypress="preventNonNumeric"
@@ -270,6 +271,7 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
 import InputField from '@/components/ui/InputField.vue';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   modelValue: {
@@ -279,6 +281,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'isValid']);
+
+
+const formValidation = useFormValidation();
 
 const formData = computed({
   get: () => props.modelValue,
@@ -342,7 +347,7 @@ const filterPhoneNumber = (event, field) => {
 // Previene la entrada de caracteres no numéricos
 const preventNonNumeric = (event) => {
   const charCode = event.which ? event.which : event.keyCode;
-  // Permitir solo números (0-9)
+
   if (charCode < 48 || charCode > 57) {
     event.preventDefault();
     return false;
@@ -355,22 +360,12 @@ const onValidation = (field, isValid) => {
   emit('isValid', isStepValid.value);
 };
 
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 const validatePassword = (password) => {
-  return password && password.length >= 6;
+  return formValidation.validateRequired(password) && password.length >= 6;
 };
 
 const validatePasswordMatch = (confirmPassword) => {
-  return confirmPassword === formData.value.password && confirmPassword.length > 0;
-};
-
-const validatePhone = (phone) => {
-  const phoneRegex = /^\d{7,}$/;
-  return phoneRegex.test(phone);
+  return formValidation.validatePasswordMatch(formData.value.password, confirmPassword);
 };
 
 const passwordStrength = computed(() => {

@@ -1,3 +1,4 @@
+
 <template>
   <div class="mb-4">
     <label :for="id" class="label-field">
@@ -13,8 +14,7 @@
         @blur="handleBlur"
         :max="maxDate"
         :class="[
-          'input-field',
-          'pr-10',
+          'input-field pr-10',
           touched && !isValid ? 'error' : '',
           touched && isValid ? 'success' : ''
         ]"
@@ -60,6 +60,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   id: {
@@ -94,6 +95,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'validation']);
 
+const formValidation = useFormValidation();
+
 const touched = ref(false);
 
 const maxDate = computed(() => {
@@ -110,16 +113,7 @@ const isValid = computed(() => {
   if (!props.modelValue) return false;
   
   if (props.validateAge) {
-    const today = new Date();
-    const birth = new Date(props.modelValue);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    
-    return age >= props.minAge;
+    return formValidation.validateAge(props.modelValue);
   }
   
   return true;
@@ -145,3 +139,4 @@ defineExpose({
   },
 });
 </script>
+

@@ -1,3 +1,4 @@
+
 <template>
   <div class="mb-4">
     <label :for="id" class="label-field">
@@ -13,9 +14,10 @@
         @blur="handleBlur"
         :placeholder="placeholder"
         :class="[
-          'input-field w-full',
-          touched && !isValid ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '',
-          touched && isValid ? 'border-green-500 focus:border-green-500 focus:ring-green-500' : ''
+          'input-field w-full pr-10',
+          touched && !isValid ? 'error' : '',
+          touched && isValid ? 'success' : '',
+          !touched || (touched && isValid) ? '' : 'error'
         ]"
       />
       
@@ -128,20 +130,3 @@ defineExpose({
 });
 </script>
 
-<style scoped>
-.input-field {
-  @apply px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
-}
-
-.label-field {
-  @apply block text-sm font-medium text-gray-700 mb-1;
-}
-
-.input-field.error {
-  @apply border-red-500 focus:border-red-500 focus:ring-red-500;
-}
-
-.input-field.success {
-  @apply border-green-500 focus:border-green-500 focus:ring-green-500;
-}
-</style>
